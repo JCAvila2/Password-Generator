@@ -82,12 +82,13 @@ def generate_without_input_characters(password_letters, password_numbers): # Fun
 
 
 def generate_with_input_characters(input_characters): # Function to generate a password with determinate characters
-    input_characters = list(input_characters)
+    list_of_characters = list(input_characters)
     password = ""
-    for i in range(len(input_characters)):
-        char = generate_random_char(input_characters)
-        input_characters.remove(char)
-        password += char
+    for i in range(len(list_of_characters)):
+        char = generate_random_char(list_of_characters)
+        list_of_characters.remove(char)
+        if char != " ":
+            password += char
     return password
 
 
@@ -192,9 +193,6 @@ random_button.place(relx = 0.3, rely = 0.1, anchor = "center")
 
 chosen_characters_button = Button(window, text = "Chose characters", command = lambda : onCheck("Chosen characters"), highlightthickness = 0, bd = 0, bg = gray, font = buttons_font, foreground = letters_color)
 chosen_characters_button.place(relx = 0.7, rely = 0.1, anchor = "center")
-
-
-
 
 
 window.mainloop()
