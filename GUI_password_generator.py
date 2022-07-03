@@ -24,7 +24,9 @@ buttons_font = font.Font(family = 'Roboto', size = 15, weight = 'bold')
 random_button = Button()
 chosen_characters_button = Button()
 password_label = Label()
+password_label_input = Label()
 copy_button = Button()
+copy_button_input = Button()
 
 
 # Functions
@@ -89,14 +91,17 @@ def generate_with_input_characters(input_characters): # Function to generate a p
     return password
 
 
-def generate_password(pool_of_characters, amount_of_letters, amount_of_numbers):
-    print(pool_of_characters, amount_of_letters, amount_of_numbers)
-    if pool_of_characters == "Random":
+def generate_password(generate_method, pool, amount_of_letters, amount_of_numbers):
+    print(generate_method, pool, amount_of_letters, amount_of_numbers)
+    if generate_method == "Random":
         password_generated = generate_without_input_characters(int(amount_of_letters), int(amount_of_numbers))
         password_label.configure(text = password_generated)
-        print(password_generated)
+    elif generate_method == "Input":
+        password_generated = generate_with_input_characters(pool)
+        password_label_input.configure(text = password_generated)
+    print(password_generated)
     copy_button.config(text = "Copy")
-
+    copy_button_input.config(text = "Copy")
 
 
 # Generate password with random characters
@@ -114,7 +119,7 @@ amount_of_numbers_entry = Entry(random_frame, width = 4, justify = "center", fon
 amount_of_numbers_entry.insert(END, "0")
 button_amount_of_numbers_sub = Button(random_frame, command = lambda : sub(amount_of_numbers_entry, 99, 1, int), text = "-", font = buttons_font, highlightthickness = 0, bd = 0, bg = gray, foreground = yellow) 
 
-button_generate_random = Button(random_frame, command = lambda : generate_password("Random", amount_of_letters_entry.get(), amount_of_numbers_entry.get()), text = "Generate", font = buttons_font, highlightthickness = 0, bd = 0, bg = gray, foreground = yellow)
+button_generate_random = Button(random_frame, command = lambda : generate_password("Random", None, amount_of_letters_entry.get(), amount_of_numbers_entry.get()), text = "Generate", font = buttons_font, highlightthickness = 0, bd = 0, bg = gray, foreground = yellow)
 password_label = Label(random_frame, text = "", bg = gray, foreground = yellow, font = answer_font)
 copy_button = Button(random_frame, command = lambda: copy(password_label.cget("text")), text = "", font = buttons_font, highlightthickness = 0, bd = 0, bg = gray, foreground = yellow)
 
@@ -139,19 +144,47 @@ def random_frame_hide(): # Hide the elements in the window
     random_frame.place_forget()
 
 
+# Generate password with input characters
+input_frame = Frame(window, height = 500, width = 500, bg = gray)
+
+input_characters_label = Label(input_frame, text = "Characters:", bg = gray, font = label_font, foreground = letters_color)
+input_characters_entry = Entry(input_frame, width = 15, justify = "center", font = buttons_font, highlightbackground = yellow, highlightcolor = "green", highlightthickness = 2, bd = 0, bg = gray, foreground = yellow)
+
+button_generate_input = Button(input_frame, command = lambda : generate_password("Input", str(input_characters_entry.get()), None, None), text = "Generate", font = buttons_font, highlightthickness = 0, bd = 0, bg = gray, foreground = yellow)
+password_label_input = Label(input_frame, text = "", bg = gray, foreground = yellow, font = answer_font)
+copy_button_input = Button(input_frame, command = lambda: copy(password_label_input.cget("text")), text = "", font = buttons_font, highlightthickness = 0, bd = 0, bg = gray, foreground = yellow)
+
+def input_frame_show():
+    input_characters_label.grid(row = 2, column = 0, padx = 5, pady = 5)
+    input_characters_entry.grid(row = 2, column = 1, padx = 5, pady = 5, columnspan = 2)
+
+    button_generate_input.grid(row = 3, column = 1, padx = 5, pady = 5)
+    password_label_input.grid(row = 4, column = 1, padx = 5, pady = 5)
+    copy_button_input.grid(row = 5, column = 1, padx = 5, pady = 5)
+
+    input_frame.place(relx = 0.5, rely = 0.5, anchor = "center")
+
+def input_frame_hide():
+    input_frame.place_forget()
+
+
+
 
 def onCheck(option): # Check which option was selected and show his frame
     copy_button.config(text = "")
+    copy_button_input.config(text = "")
     if option == "Random":
         print("Selected random")
         random_button.config(bg = yellow, font = buttons_font, foreground = "black")
         chosen_characters_button.config(bg = gray, font = buttons_font, foreground = letters_color)
+        input_frame_hide()
         random_frame_show()
     elif option == "Chosen characters":
         print("Selected Chosen characters")
         random_button.config(bg = gray, font = buttons_font, foreground = letters_color)
         chosen_characters_button.config(bg = yellow, font = buttons_font, foreground = "black")
         random_frame_hide()
+        input_frame_show()
        
 
 random_button = Button(window, text = "Random", command = lambda : onCheck("Random"), highlightthickness = 0, bd = 0, bg = gray, font = buttons_font, foreground = letters_color)
